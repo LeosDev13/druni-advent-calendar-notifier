@@ -1,0 +1,9 @@
+/app
+
+*.log
+*.tmp
+*.swp
+*.bak
+
+.vscode/
+.idea/
