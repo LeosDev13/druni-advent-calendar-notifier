@@ -4,13 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/joho/godotenv"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"regexp"
+
+	"github.com/joho/godotenv"
 )
+
+const druniAdventCalendarURL = "https://www.druni.es/calendario-adviento-druni-24-dias"
 
 func main() {
 	err := godotenv.Load(".env")
@@ -18,7 +21,7 @@ func main() {
 		log.Fatalf("Error loading .env file: %s", err)
 	}
 
-	resp, err := http.Get("https://www.druni.es/calendario-adviento-druni-24-dias")
+	resp, err := http.Get(druniAdventCalendarURL)
 	if err != nil {
 		panic("handle error")
 	}
@@ -33,7 +36,7 @@ func main() {
 	if match {
 		log.Println("seguimos sin suerte :(")
 	} else {
-		sendMessage("Entra en druni rápido que se acaban los calendarios https://www.druni.es/calendario-adviento-druni-24-dias")
+		sendMessage(fmt.Sprintf("Entra en druni rápido que se acaban los calendarios %s", druniAdventCalendarURL))
 	}
 }
 
@@ -58,8 +61,8 @@ func sendMessage(text string) (bool, error) {
 		return false, err
 	}
 
-	log.Println("Message %s was sent", text)
-	log.Println("Response JSON: %s", string(body))
+	log.Printf("Message %s was sent", text)
+	log.Printf("Response JSON: %s", string(body))
 
 	return true, nil
 }
