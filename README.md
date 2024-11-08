@@ -2,15 +2,6 @@
 
 This project is a Go application that checks the availability of the Advent calendar on the Druni online store. If the calendar is available, the application sends a notification to a specified Telegram chat.
 
-## Table of Contents
-
-- [Requirements](#requirements)
-- [Configuration](#configuration)
-- [Building and Running with Docker](#building-and-running-with-docker)
-- [Usage](#usage)
-- [Code Details](#code-details)
-- [Contributions](#contributions)
-
 ---
 
 ## Requirements
