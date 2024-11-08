@@ -16,8 +16,6 @@ RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
-COPY .env .env 
-
 COPY --from=builder /app/app .
 
 EXPOSE 8080
