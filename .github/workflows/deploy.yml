@@ -24,9 +24,6 @@ jobs:
         run: |
           docker save my-app:latest -o my-app.tar
 
-      - name: Install SCP tools
-        run: sudo apt-get install -y sshpass
-
       - name: Deploy Docker image on Droplet
         uses: appleboy/ssh-action@v0.1.8
         with:
@@ -35,11 +32,12 @@ jobs:
           key: ${{ secrets.DROPLET_SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            echo "$DOCKER_IMAGE_TARBALL" | base64 -d > /root/${{ secrets.DROPLET_USER }}/my-app.tar
+            scp -o StrictHostKeyChecking=no my-app.tar ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/my-app.tar
+
             echo "TOKEN=${{ secrets.TOKEN }}" > /root/my-app/.env
             echo "CHAT_ID=${{ secrets.CHAT_ID }}" >> /root/my-app/.env
 
-            docker load -i /root/${{ secrets.DROPLET_USER }}/my-app.tar
+            docker load -i /root/my-app.tar
 
             docker stop my-app || true
             docker rm my-app || true
