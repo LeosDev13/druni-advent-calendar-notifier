@@ -16,6 +16,11 @@ import (
 const druniAdventCalendarURL = "https://www.druni.es/calendario-adviento-druni-24-dias"
 const telegramBotUrl = "https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s"
 
+var (
+	notAvailableRegex   = regexp.MustCompile(`<span>No\s*disponible</span>`)
+	productSoldOutRegex = regexp.MustCompile(`<p class="sold-out">Producto\s*agotado</p>`)
+)
+
 func main() {
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -39,8 +44,8 @@ func main() {
 }
 
 func shouldSendMessage(text string) bool {
-	notAvailableMatch, _ := regexp.MatchString(`<span>No\s*disponible</span>`, text)
-	productSoldOutMatch, _ := regexp.MatchString(`<p class="sold-out">Producto\s*agotado</p>`, text)
+	notAvailableMatch := notAvailableRegex.MatchString(text)
+	productSoldOutMatch := productSoldOutRegex.MatchString(text)
 
 	if !notAvailableMatch && !productSoldOutMatch {
 		return true
