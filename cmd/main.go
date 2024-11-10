@@ -33,6 +33,10 @@ func main() {
 		return
 	}
 
+	if resp.StatusCode != http.StatusOK {
+		log.Fatalf("Received non-OK HTTP status: %d", resp.StatusCode)
+	}
+
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 
