@@ -1,0 +1,43 @@
+name: Deploy to DigitalOcean Droplet
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        run: |
+          docker build -t my-app:latest .
+
+      - name: Save Docker image to tar file
+        run: |
+          docker save my-app:latest -o my-app.tar
+
+      - name: Install SCP tools
+        run: sudo apt-get install -y sshpass
+
+      - name: Deploy Docker image on Droplet
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.DROPLET_IP }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.DROPLET_SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            echo "$DOCKER_IMAGE_TARBALL" | base64 -d > /home/${{ secrets.DROPLET_USER }}/my-app.tar
+
+            docker load -i /home/${{ secrets.DROPLET_USER }}/my-app.tar
+
+            docker stop my-app || true
+            docker rm my-app || true
