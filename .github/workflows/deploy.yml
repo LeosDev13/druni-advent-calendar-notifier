@@ -35,9 +35,11 @@ jobs:
           key: ${{ secrets.DROPLET_SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            echo "$DOCKER_IMAGE_TARBALL" | base64 -d > /home/${{ secrets.DROPLET_USER }}/my-app.tar
+            echo "$DOCKER_IMAGE_TARBALL" | base64 -d > /root/${{ secrets.DROPLET_USER }}/my-app.tar
+            echo "TOKEN=${{ secrets.TOKEN }}" > /root/my-app/.env
+            echo "CHAT_ID=${{ secrets.CHAT_ID }}" >> /root/my-app/.env
 
-            docker load -i /home/${{ secrets.DROPLET_USER }}/my-app.tar
+            docker load -i /root/${{ secrets.DROPLET_USER }}/my-app.tar
 
             docker stop my-app || true
             docker rm my-app || true
