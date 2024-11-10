@@ -32,6 +32,8 @@ jobs:
           key: ${{ secrets.DROPLET_SSH_PRIVATE_KEY }}
           port: 22
           script: |
+            ls -la
+
             scp -o StrictHostKeyChecking=no my-app.tar ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/root/my-app.tar
 
             echo "TOKEN=${{ secrets.TOKEN }}" > /root/my-app/.env
