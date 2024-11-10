@@ -33,11 +33,12 @@ func main() {
 		return
 	}
 
+	defer resp.Body.Close()
+
 	if resp.StatusCode != http.StatusOK {
 		log.Fatalf("Received non-OK HTTP status: %d", resp.StatusCode)
 	}
 
-	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 
 	bodyString := string(body)
@@ -79,13 +80,9 @@ func sendMessage(text string) {
 
 	defer resp.Body.Close()
 
-	body, err = io.ReadAll(resp.Body)
-
-	if err != nil {
-		log.Printf("Error occurred: %v", err)
-		return
+	if resp.StatusCode != http.StatusOK {
+		log.Fatalf("Failed to send message, HTTP status: %d", resp.StatusCode)
 	}
 
 	log.Printf("Message %s was sent", text)
-	log.Printf("Response JSON: %s", string(body))
 }
