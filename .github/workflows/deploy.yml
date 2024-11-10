@@ -19,7 +19,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t my-app:latest .
-          docker save my-app:latest -o my-app.tar
+          docker save my-app:latest > my-app.tar
 
       - name: copy file via ssh key
         uses: appleboy/scp-action@v0.1.7
@@ -29,7 +29,7 @@ jobs:
           port: 22
           key: ${{ secrets.DROPLET_SSH_PRIVATE_KEY }}
           source: "my-app.tar"
-          target: /root
+          target: "/root"
 
       - name: Deploy Docker image on Droplet
         uses: appleboy/ssh-action@v0.1.8
