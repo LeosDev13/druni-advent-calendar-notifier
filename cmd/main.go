@@ -31,11 +31,12 @@ func main() {
 
 	bodyString := string(body)
 
-	match, _ := regexp.MatchString(`<span>No\s*disponible</span>`, bodyString)
+	notAvailableMatch, _ := regexp.MatchString(`<span>No\s*disponible</span>`, bodyString)
+	productSoldOutMatch, _ := regexp.MatchString(`<p class="sold-out">Producto\s*agotado</p>`, bodyString)
 
-	if match {
+	if notAvailableMatch || productSoldOutMatch {
 		log.Println("seguimos sin suerte :(")
-	} else {
+	} else if !notAvailableMatch && !productSoldOutMatch {
 		sendMessage(fmt.Sprintf("Entra en druni rápido que se acaban los calendarios %s", druniAdventCalendarURL))
 	}
 }
