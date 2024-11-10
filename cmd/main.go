@@ -14,6 +14,7 @@ import (
 )
 
 const druniAdventCalendarURL = "https://www.druni.es/calendario-adviento-druni-24-dias"
+const telegramBotUrl = "https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s"
 
 func main() {
 	err := godotenv.Load(".env")
@@ -31,18 +32,23 @@ func main() {
 
 	bodyString := string(body)
 
-	notAvailableMatch, _ := regexp.MatchString(`<span>No\s*disponible</span>`, bodyString)
-	productSoldOutMatch, _ := regexp.MatchString(`<p class="sold-out">Producto\s*agotado</p>`, bodyString)
-
-	if notAvailableMatch || productSoldOutMatch {
-		log.Println("seguimos sin suerte :(")
-	} else if !notAvailableMatch && !productSoldOutMatch {
+	if shouldSendMessage(bodyString) {
 		sendMessage(fmt.Sprintf("Entra en druni rápido que se acaban los calendarios %s", druniAdventCalendarURL))
 	}
 }
 
+func shouldSendMessage(text string) bool {
+	notAvailableMatch, _ := regexp.MatchString(`<span>No\s*disponible</span>`, text)
+	productSoldOutMatch, _ := regexp.MatchString(`<p class="sold-out">Producto\s*agotado</p>`, text)
+
+	if !notAvailableMatch && !productSoldOutMatch {
+		return true
+	}
+	return false
+}
+
 func sendMessage(text string) (bool, error) {
-	url := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s", os.Getenv("TOKEN"), os.Getenv("CHAT_ID"), text)
+	url := fmt.Sprintf(telegramBotUrl, os.Getenv("TOKEN"), os.Getenv("CHAT_ID"), text)
 	body, _ := json.Marshal(map[string]string{
 		"text":    text,
 		"chat_id": os.Getenv("CHAT_ID"),
