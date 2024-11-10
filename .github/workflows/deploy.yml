@@ -39,10 +39,8 @@ jobs:
           key: ${{ secrets.DROPLET_SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            echo "TOKEN=${{ secrets.TOKEN }}" > ./my-app/.env
-            echo "CHAT_ID=${{ secrets.CHAT_ID }}" >> ./my-app/.env
-
-            docker load -i /root/my-app.tar
+            echo "TOKEN=${{ secrets.TOKEN }}" > .env
+            echo "CHAT_ID=${{ secrets.CHAT_ID }}" >> .env
 
             docker stop my-app || true
             docker rm my-app || true
