@@ -54,6 +54,12 @@ func shouldSendMessage(text string) bool {
 }
 
 func sendMessage(text string) {
+	token := os.Getenv("TOKEN")
+	chatID := os.Getenv("CHAT_ID")
+	if token == "" || chatID == "" {
+		log.Fatal("TOKEN or CHAT_ID is missing in the environment variables.")
+	}
+
 	url := fmt.Sprintf(telegramBotUrl, os.Getenv("TOKEN"), os.Getenv("CHAT_ID"), text)
 	body, _ := json.Marshal(map[string]string{
 		"text":    text,
