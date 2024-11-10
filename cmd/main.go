@@ -24,7 +24,8 @@ func main() {
 
 	resp, err := http.Get(druniAdventCalendarURL)
 	if err != nil {
-		panic("handle error")
+		log.Printf("Error occurred: %v", err)
+		return
 	}
 
 	defer resp.Body.Close()
@@ -47,7 +48,7 @@ func shouldSendMessage(text string) bool {
 	return false
 }
 
-func sendMessage(text string) (bool, error) {
+func sendMessage(text string) {
 	url := fmt.Sprintf(telegramBotUrl, os.Getenv("TOKEN"), os.Getenv("CHAT_ID"), text)
 	body, _ := json.Marshal(map[string]string{
 		"text":    text,
@@ -57,7 +58,8 @@ func sendMessage(text string) (bool, error) {
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(body))
 
 	if err != nil {
-		return false, err
+		log.Printf("Error occurred: %v", err)
+		return
 	}
 
 	defer resp.Body.Close()
@@ -65,11 +67,10 @@ func sendMessage(text string) (bool, error) {
 	body, err = io.ReadAll(resp.Body)
 
 	if err != nil {
-		return false, err
+		log.Printf("Error occurred: %v", err)
+		return
 	}
 
 	log.Printf("Message %s was sent", text)
 	log.Printf("Response JSON: %s", string(body))
-
-	return true, nil
 }
