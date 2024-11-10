@@ -18,10 +18,6 @@
 # Vendor directory (if not using Go modules)
 vendor/
 
-# Go dependency modules
-/go.sum
-/go.mod
-
 # Environment variables and sensitive files
 .env
 
