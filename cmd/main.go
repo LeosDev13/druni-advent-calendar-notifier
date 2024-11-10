@@ -1,8 +1,6 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -11,6 +9,7 @@ import (
 	"regexp"
 
 	"github.com/joho/godotenv"
+	"github.com/leosdev13/druni-scrapper/internal/repository"
 )
 
 const druniAdventCalendarURL = "https://www.druni.es/calendario-adviento-druni-24-dias"
@@ -65,24 +64,7 @@ func sendMessage(text string) {
 		log.Fatal("TOKEN or CHAT_ID is missing in the environment variables.")
 	}
 
-	url := fmt.Sprintf(telegramBotUrl, os.Getenv("TOKEN"), os.Getenv("CHAT_ID"), text)
-	body, _ := json.Marshal(map[string]string{
-		"text":    text,
-		"chat_id": os.Getenv("CHAT_ID"),
-	})
+	telegramRepo := repository.NewTelegramRepository(token)
 
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(body))
-
-	if err != nil {
-		log.Printf("Error occurred: %v", err)
-		return
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		log.Fatalf("Failed to send message, HTTP status: %d", resp.StatusCode)
-	}
-
-	log.Printf("Message %s was sent", text)
+	telegramRepo.SendMessage(chatID, text)
 }
